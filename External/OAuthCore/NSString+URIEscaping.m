@@ -15,7 +15,7 @@
 {
   CFStringEncoding encoding = CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding);
   NSString *escapedPath = (NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                                                              (CFStringRef)path,
+                                                                              (__bridge CFStringRef)path,
                                                                               NULL,
                                                                               (CFStringRef)@":?=,!$&'()*+;[]@#",
                                                                               encoding);
