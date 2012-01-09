@@ -88,7 +88,7 @@
   NSString *body = [mutableParams convertToURIParameterString];
   NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@?%@", urlString, body]];  
   
-  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+  ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
   request.delegate = self;
   request.requestMethod = kSKMethodPOST;
   request.shouldContinueWhenAppEntersBackground = YES;
