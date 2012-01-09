@@ -48,14 +48,14 @@ NSString *OAuthorizationHeader(NSURL *url, NSString *method, NSData *body, NSStr
 	NSDictionary *additionalQueryParameters = [NSURL ab_parseURLQueryString:[url query]];
 	NSDictionary *additionalBodyParameters = nil;
 	if(body) {
-		NSString *string = [[[NSString alloc] initWithData:body encoding:NSUTF8StringEncoding] autorelease];
+		NSString *string = [[NSString alloc] initWithData:body encoding:NSUTF8StringEncoding];
 		if(string) {
 			additionalBodyParameters = [NSURL ab_parseURLQueryString:string];
 		}
 	}
 	
 	// combine all parameters
-	NSMutableDictionary *parameters = [[oAuthAuthorizationParameters mutableCopy] autorelease];
+	NSMutableDictionary *parameters = [oAuthAuthorizationParameters mutableCopy];
 	if(additionalQueryParameters) [parameters addEntriesFromDictionary:additionalQueryParameters];
 	if(additionalBodyParameters) [parameters addEntriesFromDictionary:additionalBodyParameters];
 	
@@ -88,7 +88,7 @@ NSString *OAuthorizationHeader(NSURL *url, NSString *method, NSData *body, NSStr
 	NSData *signature = HMAC_SHA1(signatureBaseString, key);
 	NSString *base64Signature = [signature base64EncodedString];
 	
-	NSMutableDictionary *authorizationHeaderDictionary = [[oAuthAuthorizationParameters mutableCopy] autorelease];
+	NSMutableDictionary *authorizationHeaderDictionary = [oAuthAuthorizationParameters mutableCopy];
 	[authorizationHeaderDictionary setObject:base64Signature forKey:@"oauth_signature"];
 	
 	NSMutableArray *authorizationHeaderItems = [NSMutableArray array];
@@ -115,7 +115,7 @@ extern NSString *OAuth2Header(NSURL *url,
 	NSString *oAuth2Nonce = [NSString ab_GUID];
 	NSString *oAuth2Timestamp = [NSString stringWithFormat:@"%d", (int)[[NSDate date] timeIntervalSince1970]];
 
-  NSMutableString *normalizedString = [[[NSMutableString alloc] init] autorelease];
+  NSMutableString *normalizedString = [[NSMutableString alloc] init];
   
   [normalizedString appendFormat:@"%@\n", _oAuthToken];
   [normalizedString appendFormat:@"%@\n", oAuth2Timestamp];

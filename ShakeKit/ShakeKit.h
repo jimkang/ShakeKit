@@ -20,7 +20,7 @@ typedef void (^SKCompletionHandler)(id response, NSError *error);
 @property (copy) NSString *applicationKey;
 @property (copy) NSString *applicationSecret;
 
-@property (retain) NSOperationQueue *queue;
+@property (strong) NSOperationQueue *queue;
 
 /** 
  Initialize an instance of ShakeKit using the credential you get from applying at this URL:

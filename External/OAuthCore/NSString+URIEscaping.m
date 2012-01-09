@@ -14,13 +14,13 @@
 + (NSString *)escapePath:(NSString*)path 
 {
   CFStringEncoding encoding = CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding);
-  NSString *escapedPath = (NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
+  NSString *escapedPath = (__bridge_transfer NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
                                                                               (__bridge CFStringRef)path,
                                                                               NULL,
                                                                               (CFStringRef)@":?=,!$&'()*+;[]@#",
                                                                               encoding);
   
-  return [escapedPath autorelease];
+  return escapedPath;
 }
 
 

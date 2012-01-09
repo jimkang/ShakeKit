@@ -59,9 +59,10 @@
 + (NSString *)ab_GUID
 {
 	CFUUIDRef u = CFUUIDCreate(kCFAllocatorDefault);
-	CFStringRef s = CFUUIDCreateString(kCFAllocatorDefault, u);
+	NSString *s = (__bridge_transfer NSString *)
+    CFUUIDCreateString(kCFAllocatorDefault, u);
 	CFRelease(u);
-	return [(__bridge NSString *)s autorelease];
+	return s;
 }
 
 @end

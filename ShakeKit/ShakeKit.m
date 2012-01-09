@@ -60,13 +60,6 @@
 // | Memory Management
 // +--------------------------------------------------------------------
 
-- (void)dealloc
-{
-  SGRelease(applicationKey);
-  SGRelease(applicationSecret);
-  SGRelease(queue);
-  [super dealloc];
-}
 
 
 #pragma mark -
@@ -78,7 +71,7 @@
 - (void)loginWithUsername:(NSString *)theUsername password:(NSString *)thePassword withCompletionHandler:(SKCompletionHandler)theHandler
 {
   NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:theUsername, @"username", thePassword, @"password", nil];  
-  NSMutableDictionary *mutableParams = [[[NSMutableDictionary alloc] initWithDictionary:params] autorelease];
+  NSMutableDictionary *mutableParams = [[NSMutableDictionary alloc] initWithDictionary:params];
   [mutableParams setValue:self.applicationKey forKey:@"client_id"];
   [mutableParams setValue:self.applicationSecret forKey:@"client_secret"];
   [mutableParams setValue:@"password" forKey:@"grant_type"];
@@ -87,8 +80,10 @@
   NSString *urlString = [NSString stringWithFormat:@"%@://%@%@", kSKProtocolHTTPS, kSKMlkShkAPIHost, escapedPath];
   NSString *body = [mutableParams convertToURIParameterString];
   NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@?%@", urlString, body]];  
-  
-  ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+      
+    // __unsafe_unretained is OK here because we know that the block using this 
+    // object will be called by the object itself.
+    __unsafe_unretained ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
   request.delegate = self;
   request.requestMethod = kSKMethodPOST;
   request.shouldContinueWhenAppEntersBackground = YES;
@@ -204,7 +199,7 @@
   NSString *urlString = [NSString stringWithFormat:@"%@://%@%@", kSKProtocolHTTPS, kSKMlkShkAPIHost, path];
   NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@", urlString]];
 
-  __block ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
+  __unsafe_unretained ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:url];
   request.delegate = self;
   request.requestMethod = kSKMethodPOST;
   request.shouldContinueWhenAppEntersBackground = YES;
@@ -293,13 +288,13 @@
 
 - (void)loadObjectOfClass:(Class)aClass path:(NSString *)path completionHandler:(SKCompletionHandler)handler
 {
-  __block ASIHTTPRequest *request = [self requestWithProtocol:kSKProtocolHTTPS host:kSKMlkShkAPIHost path:path parameters:nil method:kSKMethodGET];
+  __unsafe_unretained ASIHTTPRequest *request = [self requestWithProtocol:kSKProtocolHTTPS host:kSKMlkShkAPIHost path:path parameters:nil method:kSKMethodGET];
   
   [request setCompletionBlock:^{
     NSDictionary *responseDictionary = [[request responseString] objectFromJSONString];
     id obj = [[aClass alloc] initWithDictionary:responseDictionary];
     
-    handler([obj autorelease], nil);
+    handler(obj, nil);
   }];
   
   [request setFailedBlock:^{
@@ -312,7 +307,7 @@
 
 - (void)loadArrayOfClass:(Class)aClass key:(NSString *)key path:(NSString *)path completionHandler:(SKCompletionHandler)handler
 {
-  __block ASIHTTPRequest *request = [self requestWithProtocol:kSKProtocolHTTPS host:kSKMlkShkAPIHost path:path parameters:nil method:kSKMethodGET];
+  __unsafe_unretained ASIHTTPRequest *request = [self requestWithProtocol:kSKProtocolHTTPS host:kSKMlkShkAPIHost path:path parameters:nil method:kSKMethodGET];
   
   [request setCompletionBlock:^{
     NSDictionary *responseDictionary = [[request responseString] objectFromJSONString];
@@ -321,10 +316,10 @@
     {
       id obj = [[aClass alloc] initWithDictionary:objInfo];
       [objs addObject:obj];
-      [obj release];
+      ;
     }
     
-    handler([objs autorelease], nil);
+    handler(objs, nil);
   }];
   
   [request setFailedBlock:^{
